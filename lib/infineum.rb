@@ -1,0 +1,3 @@
+module Infineum
+  # Your code goes here...
+end
