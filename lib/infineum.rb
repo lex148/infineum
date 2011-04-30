@@ -3,7 +3,7 @@
   require lib
 end
 
-%w"infineum infineum/Server infineum/Server/Actions".each do |folder|
+%w"infineum infineum/server infineum/server/actions".each do |folder|
   # Requiring all of the files in the dir. 
   Dir[File.join File.dirname(__FILE__), folder, '*.rb'].each do |file|
     require file
