@@ -5,7 +5,7 @@ describe Infineum::Server do
   describe 'Start the Server' do
 
     before( :each ) do
-      @server = Infineum::Server.new
+      @server = Infineum::Server::Server.new
     end
 
     after( :each ) do
