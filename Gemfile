@@ -5,5 +5,5 @@ source "http://rubygems.org"
 gemspec
 
 gem 'rspec', '2.5.0'
-
+gem 'eventmachine'
 

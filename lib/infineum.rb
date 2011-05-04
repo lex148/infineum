@@ -1,5 +1,5 @@
 # Pulling in all the libs we need to get the job done
-%w(socket).each do |lib|
+%w(socket eventmachine).each do |lib|
   require lib
 end
 
