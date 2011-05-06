@@ -13,6 +13,10 @@ Gem::Specification.new do |s|
   s.description = %q{TODO: Write a gem description}
 
   s.rubyforge_project = "infineum"
+  s.add_dependency 'eventmachine', '0.12.10'
+
+  s.add_development_dependency 'bundler'
+  s.add_development_dependency 'rspec'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

@@ -1,13 +1,6 @@
-
-
 module Infineum::Server
-  class Server
-    def start
-      EM::run {
-
-      }
-      action = ActionBuilder.new.build socket
-      action.run
-    end
+  def receive_data data
+    action = ActionBuilder.build data
+    send_data action.run
   end
 end
