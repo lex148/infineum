@@ -1,5 +1,6 @@
 require 'bundler'
 require 'rake/testtask'
+
 Bundler::GemHelper.install_tasks
 
 Rake::TestTask.new(:test) do |test|
@@ -8,8 +9,6 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = true
 end
 
-
-
-task :default => :test 
+task :default => :test
 
 
