@@ -1,15 +1,32 @@
 module Infineum::Server::Actions
   class Save
 
-    def run(args)
-    #TODO: check the black list for this user
-      if args[1] == 'for'
-        'Ok'
+
+
+    def run(data)
+      if @save_for
+        save(data)
+      else
+        handshake(data)
+      end
+    end
+
+
+    def handshake( data )
+      #TODO: check the black list for this user
+      if data.start_with? 'save for'
+        @save_for = data.split(' ')[2]
+        'Granted'
       else
         'Denied' 
       end
     end
 
-  end
+    def save data 
+
+      'Saved'
+    end
+
+    end
 end
 
