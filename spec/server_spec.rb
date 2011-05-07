@@ -27,7 +27,19 @@ module TestErrorClient
   include TestOutputClient
 
   def post_init
-    send_data 'blah_blah_this_should_error_out'
+    send_data 'noop'
+  end
+end
+
+module TestSaveHandShakeClient
+  include TestOutputClient
+  def receive_data data
+    $response = data
+    EM.stop
+  end
+
+  def post_init
+    send_data 'save for test_user'
   end
 end
 
@@ -64,4 +76,17 @@ describe Infineum::Server do
       $response.should == 'Noop'
     end
   end
+
+
+  context 'Save' do
+    it 'should return "Ok" message if Server accepts user for saving' do
+      EM.run do
+        $response = nil
+        EM.start_server localhost, @port, Infineum::Server
+        EM.connect localhost, @port, TestSaveHandShakeClient
+      end
+      $response.should == 'Ok'
+    end
+  end
+
 end

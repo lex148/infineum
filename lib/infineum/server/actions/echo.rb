@@ -2,7 +2,7 @@
 module Infineum::Server::Actions
   class Echo
 
-    def run
+    def run(*args)
       'Hello'
     end
   end

@@ -1,6 +1,6 @@
 module Infineum::Server::Actions
   class Noop
-    def run 
+    def run(*args) 
       'Noop'
     end
   end
