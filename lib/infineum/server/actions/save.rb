@@ -23,7 +23,8 @@ module Infineum::Server::Actions
     end
 
     def save data 
-
+      r = Redis.new(:db => 'infineum')
+      r.rpush( @save_for, data )
       'Saved'
     end
 
