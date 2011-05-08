@@ -29,9 +29,10 @@ end
 describe Infineum::Server do
 
   before(:each) do
-      @db = Redis.new(:db => 'infineum_chunks')
+      @db = Redis.new(:db => 'infineum')
+      @hash = Digest::MD5.hexdigest('fake_data_chunk').to_s 
       @db.del('test_user:chunks')
-      @db.del('test_user:hashes')
+      @db.del(@hash + ':data')
   end
 
   context 'Save' do
@@ -63,22 +64,21 @@ describe Infineum::Server do
         EM.start_server localhost, @port, Infineum::Server
         EM.connect localhost, @port, TestSaveClientSave
       end
-      data = @db.lrange('test_user:chunks',-10,-1)
-      data.first.should == 'fake_data_chunk'
+      data = @db[@hash + ':data']
+      #data dd= @db.lrange('test_user:chunks',-10,-1)
+      data.should == 'fake_data_chunk'
     end
   end
 
   context 'Save' do
-    it 'should store the chunks hash in the db' do
+    it 'should store the chunks hash in users chuck list' do
       EM.run do
         $response = nil
         EM.start_server localhost, @port, Infineum::Server
         EM.connect localhost, @port, TestSaveClientSave
       end
-      data = @db.lrange('test_user:hashes',-10,-1)
-      hash = Digest::MD5.hexdigest('fake_data_chunk').to_s 
-      puts data.join(',')
-      data.first.should == hash
+      data = @db.lrange('test_user:chunks',-10,-1)
+      data.select{|x| x == @hash}.size.should > 0
     end
   end
 end

@@ -23,10 +23,10 @@ module Infineum::Server::Actions
     end
 
     def save data 
-      c = Redis.new(:db => 'infineum')
-      h = Redis.new(:db => 'infineum')
-      c.rpush( @save_for + ':chunks', data )
-      h.rpush( @save_for + ':hashes', Digest::MD5.hexdigest(data) )
+      db = Redis.new(:db => 'infineum')
+      hash = Digest::MD5.hexdigest(data) 
+      db[hash + ':data'] = data
+      db.rpush( @save_for + ':chunks', hash )
       'Saved'
     end
 
