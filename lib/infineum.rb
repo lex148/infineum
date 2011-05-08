@@ -1,5 +1,5 @@
 # Pulling in all the libs we need to get the job done
-%w(socket eventmachine redis).each do |lib|
+%w(socket eventmachine redis digest/md5).each do |lib|
   require lib
 end
 
