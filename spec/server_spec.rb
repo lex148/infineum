@@ -1,41 +1,27 @@
 require 'helper'
 
-module TestOutputClient
-  def receive_data data
-    $response = data
-    EM.stop
+def SimpleClient action
+  mod = Module.new do
+    def receive_data data
+      $response = data
+      EM.stop
+    end
   end
+
+  mod.module_eval "def post_init() send_data '#{action}' end"
+  mod
 end
 
-module TestEchoClient
-  include TestOutputClient
-
-  def post_init
-    send_data 'echo'
-  end
-end
-
-module TestNoopClient
-  include TestOutputClient
-
-  def post_init
-    send_data 'noop'
-  end
-end
-
-module TestErrorClient
-  include TestOutputClient
-
-  def post_init
-    send_data 'blah_blah_this_should_error_out'
-  end
-end
+TestEchoClient  = SimpleClient 'echo'
+TestNoopClient  = SimpleClient 'noop'
+TestErrorClient = SimpleClient 'error'
 
 describe Infineum::Server do
+  before(:each) { $response = nil }
+
   context 'Echo' do
     it 'should return a "Hello" message' do
       EM.run do
-        $response = nil
         EM.start_server localhost, @port, Infineum::Server
         EM.connect localhost, @port, TestEchoClient
       end
@@ -46,7 +32,6 @@ describe Infineum::Server do
   context 'Noop' do
     it 'should return a "Noop" message' do
       EM.run do
-        $response = nil
         EM.start_server localhost, @port, Infineum::Server
         EM.connect localhost, @port, TestNoopClient
       end
@@ -57,7 +42,6 @@ describe Infineum::Server do
   context 'Error' do
     it 'should return a "Noop" message when invalid data is sent' do
       EM.run do
-        $response = nil
         EM.start_server localhost, @port, Infineum::Server
         EM.connect localhost, @port, TestErrorClient
       end
