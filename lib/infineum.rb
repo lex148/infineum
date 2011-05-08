@@ -10,7 +10,11 @@ end
   end
 end
 
-
+class String
+  def to_hashcode
+    Digest::MD5.hexdigest(self)
+  end
+end
 
 module Infineum
 end

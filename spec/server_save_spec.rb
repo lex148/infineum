@@ -9,11 +9,29 @@ module TestSaveHandShakeClient
 end
 
 
-module TestSaveClientSave
+module TestSaveClientChunk
   def receive_data data
     $response = data
     if $response == 'Granted'
-      send_data 'fake_data_chunk'
+      send_data 'data:fake_data_chunk'
+    else
+      EM.stop 
+    end
+  end
+
+  def post_init
+    send_data 'save for test_user'
+  end
+end
+
+
+module TestSaveClientPeerList
+  def receive_data data
+    $response = data
+    if $response == 'Granted'
+      send_data 'data:fake_data_chunk'
+    elsif $response == 'Saved'
+      send_data 'peers:0.0.0.0'
     else
       EM.stop 
     end
@@ -29,10 +47,11 @@ end
 describe Infineum::Server do
 
   before(:each) do
-      @db = Redis.new(:db => 'infineum')
-      @hash = Digest::MD5.hexdigest('fake_data_chunk').to_s 
+      @db = Redis.new()
+      @hash = ('fake_data_chunk').to_hashcode.to_s 
       @db.del('test_user:chunks')
       @db.del(@hash + ':data')
+      @db.del(@hash + ':peers')
   end
 
   context 'Save' do
@@ -51,7 +70,7 @@ describe Infineum::Server do
       EM.run do
         $response = nil
         EM.start_server localhost, @port, Infineum::Server
-        EM.connect localhost, @port, TestSaveClientSave
+        EM.connect localhost, @port, TestSaveClientChunk
       end
       $response.should == 'Saved'
     end
@@ -62,10 +81,9 @@ describe Infineum::Server do
       EM.run do
         $response = nil
         EM.start_server localhost, @port, Infineum::Server
-        EM.connect localhost, @port, TestSaveClientSave
+        EM.connect localhost, @port, TestSaveClientChunk
       end
       data = @db[@hash + ':data']
-      #data dd= @db.lrange('test_user:chunks',-10,-1)
       data.should == 'fake_data_chunk'
     end
   end
@@ -75,12 +93,27 @@ describe Infineum::Server do
       EM.run do
         $response = nil
         EM.start_server localhost, @port, Infineum::Server
-        EM.connect localhost, @port, TestSaveClientSave
+        EM.connect localhost, @port, TestSaveClientChunk
       end
-      data = @db.lrange('test_user:chunks',-10,-1)
-      data.select{|x| x == @hash}.size.should > 0
+      data = @db.lrange('test_user:chunks',-1,-1)
+      data.index(@hash).should_not be nil
     end
   end
+
+  
+  context 'Save' do
+    it 'should store the chunks hash in users chuck list' do
+      EM.run do
+        $response = nil
+        EM.start_server localhost, @port, Infineum::Server
+        EM.connect localhost, @port, TestSaveClientPeerList
+      end
+      data = @db[@hash + ':data']
+      data = @db.lrange(@hash + ':peers',-1,-1)
+      data.index('0.0.0.0').should_not be nil
+    end
+  end
+
 end
 
 
