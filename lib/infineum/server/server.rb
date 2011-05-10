@@ -8,7 +8,9 @@ module Infineum::Server
   #
   # Sends data from the action
   def receive_data data
-    action = ActionBuilder.build data
-    send_data action.run
+    args = data.split ' '
+    @action ||= ActionBuilder.build args[0]
+    send_data @action.run data
   end
+
 end

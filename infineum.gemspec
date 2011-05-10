@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "infineum"
   s.add_dependency 'eventmachine', '0.12.10'
+  s.add_dependency 'redis', '2.2.0'
 
   s.add_development_dependency 'bundler'
   s.add_development_dependency 'rspec'

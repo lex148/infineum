@@ -48,4 +48,6 @@ describe Infineum::Server do
       $response.should == 'Noop'
     end
   end
+
+
 end
