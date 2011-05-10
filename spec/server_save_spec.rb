@@ -1,5 +1,12 @@
 require 'helper'
 
+module TestOutputClient
+  def receive_data data
+    $response = data
+    EM.stop
+  end
+end
+
 module TestSaveHandShakeClient
   include TestOutputClient
 
